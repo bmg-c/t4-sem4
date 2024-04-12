@@ -17,13 +17,12 @@ class ProductModel(Model):
     __tablename__ = "product"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # author_id: Mapped[int]
-    vendor_code: Mapped[int]
+    author_id: Mapped[int]
+    vendor_code: Mapped[int] = mapped_column(unique=True)
     discipline: Mapped[str]
     name: Mapped[str]
     description: Mapped[Optional[str]]
     price: Mapped[float]
-    # popularity: Mapped[int]
 
 
 async def create_tables():
