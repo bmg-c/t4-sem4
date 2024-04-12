@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from api import router as api_router
 from contextlib import asynccontextmanager
 from database import create_tables
 import os
@@ -11,3 +12,4 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(api_router)
