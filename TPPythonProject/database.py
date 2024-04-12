@@ -8,10 +8,12 @@ engine = create_async_engine(
 )
 new_session = async_sessionmaker(engine, expire_on_commit=False)
 
+
 class Model(DeclarativeBase):
     pass
 
-class product(Model):
+
+class ProductModel(Model):
     __tablename__ = "product"
 
     id: Mapped[int] = mapped_column(primary_key=True)
