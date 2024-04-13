@@ -1,8 +1,12 @@
+import os
+from fastapi import UploadFile
+from fastapi.responses import FileResponse
 from database import new_session, ProductModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete
 from schemas import AddProduct
-
+from uuid import uuid4
+import shutil
 
 
 class Product:
@@ -10,7 +14,7 @@ class Product:
     async def add_product(self, data: AddProduct):
         async with new_session() as session:
             data_dict = data.model_dump()
-            product_field = ProductModel(**data_dict, author_id=0) # добавить author_id после добавления пользователей
+            product_field = ProductModel(**data_dict, author_id=0)  # добавить author_id после добавления пользователей
             session.add(product_field)
             try:
                 await session.flush()
@@ -20,12 +24,44 @@ class Product:
             return {"status": True, "product_id": product_field.id, "author_id": product_field.author_id}
 
     @classmethod
+    async def add_product_photo(self, product_id: int, photo: UploadFile):
+        if photo.content_type != "image/png" and photo.content_type != "image/jpeg":
+            return {"status": False}
+
+        if photo.content_type == "image/png":
+            photo.filename = str(uuid4()) + ".png"
+        else:
+            photo.filename = str(uuid4()) + ".jpg"
+        path = f"media/{photo.filename}"
+
+        async with new_session() as session:
+            query = select(ProductModel).filter_by(id=product_id)
+            result = await session.execute(query)
+            product_field = result.scalars().first()
+            if product_field is None:
+                return {"status": False}
+            if product_field.photo is not None:
+                os.remove("./" + product_field.photo)
+            with open(path, "wb+") as buffer:
+                shutil.copyfileobj(photo.file, buffer)
+            product_field.photo = path
+            await session.flush()
+            await session.commit()
+            return {"status": True}
+
+    @classmethod
     async def del_product(self, product_id: int):
         async with new_session() as session:
-            query = delete(ProductModel).filter_by(id=product_id)
+            query = select(ProductModel).filter_by(id=product_id)
             result = await session.execute(query)
-            if (result.rowcount <= 0):
+            product_field = result.scalars().first()
+            if product_field is None:
                 return {"status": False}
+            path = product_field.photo
+            if path is not None:
+                os.remove(path)
+            query = delete(ProductModel).filter_by(id=product_id)
+            await session.execute(query)
             await session.flush()
             await session.commit()
             return {"status": True}
@@ -39,7 +75,7 @@ class Product:
             return product_field
 
     @classmethod
-    async def get_product_by_vendor_code(self, vendor_code: int):
+    async def get_product_by_vendor_code(self, vendor_code: str):
         async with new_session() as session:
             query = select(ProductModel).filter_by(vendor_code=vendor_code)
             result = await session.execute(query)
@@ -61,3 +97,16 @@ class Product:
             result = await session.execute(query)
             product_fields = result.scalars().all()
             return product_fields
+
+    @classmethod
+    async def get_product_photo(self, product_id: int):
+        async with new_session() as session:
+            query = select(ProductModel).filter_by(id=product_id)
+            result = await session.execute(query)
+            product_field = result.scalars().first()
+            if product_field is None:
+                return {"status": False}
+            if product_field.photo is None:
+                return FileResponse("media/nophoto.jpg")
+            else:
+                return FileResponse(product_field.photo)
