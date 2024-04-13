@@ -1,7 +1,10 @@
-from fastapi import APIRouter
+from __future__ import annotations
+
+from fastapi import APIRouter, File, UploadFile
+from fastapi.responses import FileResponse
 from schemas import AddProduct, AddProductInform, GetProduct, Inform
 from services import Product
-from typing import Optional
+from typing import Optional, Annotated
 
 router = APIRouter(tags=["Product"], prefix="/product")
 
@@ -10,6 +13,9 @@ router = APIRouter(tags=["Product"], prefix="/product")
 async def add_product(data: AddProduct):
     return await Product.add_product(data)
 
+@router.put("/id/{product_id}/addphoto", response_model=Inform)
+async def add_product_photo(product_id: int, photo: UploadFile = File(...)):
+    return await Product.add_product_photo(product_id, photo)
 
 @router.delete("/{product_id}/delete", response_model=Inform)
 async def del_product(product_id: int):
@@ -22,7 +28,7 @@ async def get_product(product_id: int):
 
 
 @router.get("/vendor_code/{vendor_code}", response_model=Optional[GetProduct])
-async def get_product_by_vendor_code(vendor_code: int):
+async def get_product_by_vendor_code(vendor_code: str):
     return await Product.get_product_by_vendor_code(vendor_code)
 
 
@@ -34,3 +40,8 @@ async def get_product_by_author(author_id: int):
 @router.get("", response_model=list[GetProduct])
 async def get_all_products():
     return await Product.get_all_products()
+
+
+@router.get("/id/{product_id}/photo", response_model=Annotated[FileResponse, Inform])
+async def get_product_photo(product_id: int):
+    return await Product.get_product_photo(product_id)

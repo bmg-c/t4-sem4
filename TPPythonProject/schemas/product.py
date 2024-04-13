@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class AddProduct(BaseModel):
-    vendor_code: int
+    vendor_code: str
     discipline: str
     name: str
     description: Optional[str] = None
@@ -17,9 +17,10 @@ class AddProductInform(BaseModel):
 
 
 class GetProduct(BaseModel):
+    photo: Optional[str]
     id: int
     author_id: int
-    vendor_code: int
+    vendor_code: str
     discipline: str
     name: str
     description: Optional[str] = None

@@ -18,7 +18,8 @@ class ProductModel(Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     author_id: Mapped[int]
-    vendor_code: Mapped[int] = mapped_column(unique=True)
+    photo: Mapped[Optional[str]]
+    vendor_code: Mapped[str] = mapped_column(unique=True)
     discipline: Mapped[str]
     name: Mapped[str]
     description: Mapped[Optional[str]]
