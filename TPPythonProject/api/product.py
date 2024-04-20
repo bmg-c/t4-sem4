@@ -42,11 +42,6 @@ async def get_all_products():
     return await Product.get_all_products()
 
 
-@router.get("/sort_by", response_model=list[GetProduct])
-async def get_all_products_sorted_by(sort_by: str):
-    return await Product.get_all_products_sorted_by(sort_by)
-
-
 @router.get("/id/{product_id}/photo", response_model=Annotated[FileResponse, Inform])
 async def get_product_photo(product_id: int):
     return await Product.get_product_photo(product_id)
