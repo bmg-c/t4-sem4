@@ -42,6 +42,16 @@ async def get_all_products():
     return await Product.get_all_products()
 
 
+@router.get("/search_query", response_model=list[GetProduct])
+async def get_all_products_by_search_query(search_query: str):
+    return await Product.get_all_products_by_search_query(search_query)
+
+
+@router.get("/search_query/sorted_by", response_model=list[GetProduct])
+async def get_all_products_by_search_query_sorted_by(search_query: str, sort_by: str):
+    return await Product.get_all_products_by_search_query_sorted_by(search_query, sort_by)
+
+
 @router.get("/sort_by", response_model=list[GetProduct])
 async def get_all_products_sorted_by(sort_by: str):
     return await Product.get_all_products_sorted_by(sort_by)

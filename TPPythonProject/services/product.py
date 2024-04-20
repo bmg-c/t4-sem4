@@ -99,6 +99,32 @@ class Product:
             product_fields = result.scalars().all()
             return product_fields
 
+
+    @classmethod
+    async def get_all_products_by_search_query(self, search_query: str):
+        async with new_session() as session:
+            query = select(ProductModel).filter(ProductModel.name.contains(search_query))
+            result = await session.execute(query)
+            product_fields = result.scalars().all()
+            return product_fields
+
+
+    @classmethod
+    async def get_all_products_by_search_query_sorted_by(self, search_query: str, sort_by: str):
+        async with new_session() as session:
+            query = select(ProductModel).filter(ProductModel.name.contains(search_query))
+            match sort_by:
+                case "ascending_price":
+                    query = query.order_by(ProductModel.price)
+                case "descending_price":
+                    query = query.order_by(ProductModel.price.desc())
+                case "name" | _:
+                    query = query.order_by(ProductModel.name)
+            result = await session.execute(query)
+            product_fields = result.scalars().all()
+            return product_fields
+
+
     @classmethod
     async def get_product_photo(self, product_id: int):
         async with new_session() as session:
