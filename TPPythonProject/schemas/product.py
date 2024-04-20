@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 
@@ -7,11 +7,10 @@ class AddProduct(BaseModel):
     discipline: str
     name: str
     description: Optional[str] = None
-    price: float
+    price: float = Field(ge=1.0, le=100000.0)
 
 
 class AddProductInform(BaseModel):
-    status: bool
     product_id: int
     author_id: int
 

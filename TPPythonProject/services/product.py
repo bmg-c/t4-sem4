@@ -1,6 +1,6 @@
 import os
 from typing import Sequence
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException, status
 from fastapi.responses import FileResponse
 from database import new_session, ProductModel
 from sqlalchemy.exc import IntegrityError
@@ -31,14 +31,14 @@ class Product:
             try:
                 await session.flush()
             except IntegrityError:
-                return {"status": False, "product_id": -1, "author_id": -1}
+                raise HTTPException(status.HTTP_400_BAD_REQUEST, "Can't add product to the database, possible: vendor_code exists")
             await session.commit()
-            return {"status": True, "product_id": product_field.id, "author_id": product_field.author_id}
+            return {"product_id": product_field.id, "author_id": product_field.author_id}
 
     @classmethod
     async def add_product_photo(self, product_id: int, photo: UploadFile):
         if photo.content_type != "image/png" and photo.content_type != "image/jpeg":
-            return {"status": False}
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="File should be one of these image types: png, jpg, jpeg")
 
         if photo.content_type == "image/png":
             photo.filename = str(uuid4()) + ".png"
@@ -51,7 +51,7 @@ class Product:
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                return {"status": False}
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id does not exist")
             if product_field.photo is not None:
                 os.remove("./" + product_field.photo)
             with open(path, "wb+") as buffer:
@@ -59,7 +59,7 @@ class Product:
             product_field.photo = path
             await session.flush()
             await session.commit()
-            return {"status": True}
+            return {}
 
     @classmethod
     async def del_product(self, product_id: int):
@@ -68,7 +68,7 @@ class Product:
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                return {"status": False}
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id does not exist")
             path = product_field.photo
             if path is not None:
                 os.remove(path)
@@ -76,7 +76,7 @@ class Product:
             await session.execute(query)
             await session.flush()
             await session.commit()
-            return {"status": True}
+            return {}
 
     @classmethod
     async def get_product(self, product_id: int):
@@ -84,6 +84,8 @@ class Product:
             query = select(ProductModel).filter_by(id=product_id)
             result = await session.execute(query)
             product_field = result.scalars().first()
+            if product_field is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id does not exist")
             return product_field
 
     @classmethod
@@ -92,6 +94,8 @@ class Product:
             query = select(ProductModel).filter_by(vendor_code=vendor_code)
             result = await session.execute(query)
             product_field = result.scalars().first()
+            if product_field is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this vendor code does not exist")
             return product_field
 
     @classmethod
@@ -137,7 +141,7 @@ class Product:
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                return {"status": False}
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id has not been found")
             if product_field.photo is None:
                 return FileResponse("media/nophoto.jpg")
             else:
@@ -151,3 +155,4 @@ class Product:
             result = await session.execute(query)
             product_fields = result.scalars().all()
             return product_fields
+
