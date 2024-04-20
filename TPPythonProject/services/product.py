@@ -1,4 +1,5 @@
 import os
+from typing import Sequence
 from fastapi import UploadFile
 from fastapi.responses import FileResponse
 from database import new_session, ProductModel
@@ -110,3 +111,17 @@ class Product:
                 return FileResponse("media/nophoto.jpg")
             else:
                 return FileResponse(product_field.photo)
+
+    @classmethod
+    async def get_all_products_sorted_by(self, sort_by: str) -> Sequence[ProductModel]:
+        async with new_session() as session:
+            match sort_by:
+                case "ascending_price":
+                    query = select(ProductModel).order_by(ProductModel.price)
+                case "descending_price":
+                    query = select(ProductModel).order_by(ProductModel.price.desc())
+                case "name" | _:
+                    query = select(ProductModel).order_by(ProductModel.name)
+            result = await session.execute(query)
+            product_fields = result.scalars().all()
+            return product_fields
