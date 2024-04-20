@@ -4,10 +4,21 @@ from fastapi import UploadFile
 from fastapi.responses import FileResponse
 from database import new_session, ProductModel
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, Select
 from schemas import AddProduct
 from uuid import uuid4
 import shutil
+
+
+def get_select_sorted_by(sel: Select, sort_by: str) -> Select:
+    match sort_by:
+        case "ascending_price":
+            return sel.order_by(ProductModel.price)
+        case "descending_price":
+            return sel.order_by(ProductModel.price.desc())
+        case "name" | _:
+            return sel.order_by(ProductModel.name)
+
 
 
 class Product:
@@ -113,13 +124,7 @@ class Product:
     async def get_all_products_by_search_query_sorted_by(self, search_query: str, sort_by: str):
         async with new_session() as session:
             query = select(ProductModel).filter(ProductModel.name.contains(search_query))
-            match sort_by:
-                case "ascending_price":
-                    query = query.order_by(ProductModel.price)
-                case "descending_price":
-                    query = query.order_by(ProductModel.price.desc())
-                case "name" | _:
-                    query = query.order_by(ProductModel.name)
+            query = get_select_sorted_by(query, sort_by)
             result = await session.execute(query)
             product_fields = result.scalars().all()
             return product_fields
@@ -141,13 +146,8 @@ class Product:
     @classmethod
     async def get_all_products_sorted_by(self, sort_by: str) -> Sequence[ProductModel]:
         async with new_session() as session:
-            match sort_by:
-                case "ascending_price":
-                    query = select(ProductModel).order_by(ProductModel.price)
-                case "descending_price":
-                    query = select(ProductModel).order_by(ProductModel.price.desc())
-                case "name" | _:
-                    query = select(ProductModel).order_by(ProductModel.name)
+            query = select(ProductModel)
+            query = get_select_sorted_by(query, sort_by)
             result = await session.execute(query)
             product_fields = result.scalars().all()
             return product_fields
