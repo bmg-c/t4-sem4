@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from database import new_session, ProductModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete, Select
-from schemas import AddProduct
+from schemas import AddProduct, AddProductInform
 from uuid import uuid4
 import shutil
 
@@ -33,7 +33,7 @@ class Product:
             except IntegrityError:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST, "Can't add product to the database, possible: vendor_code exists")
             await session.commit()
-            return {"product_id": product_field.id, "author_id": product_field.author_id}
+            return AddProductInform(product_id=product_field.id, author_id=product_field.author_id)
 
     @classmethod
     async def add_product_photo(self, product_id: int, photo: UploadFile):
