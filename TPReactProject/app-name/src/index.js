@@ -1,12 +1,79 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
+import React,{ useState } from 'react';
+import ReactDOM from 'react-dom';
+//import SearchComponent from './SearchComponent';
+//import FilterComponent from './FilterComponent';
 
-const rootElement = document.getElementById("root");
-const root = createRoot(rootElement);
+class SearchComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchTerm: '',
+      searchResults: 'Вы ничего не нашли',
+    };
+  }
 
+  handleInputChange = (event) => {
+    this.setState({
+      searchTerm: event.target.value,
+    });
+  };
+
+  handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      if (this.state.searchTerm) {
+        this.setState({
+          searchResults: this.state.searchTerm,
+        });
+      } else {
+        this.setState({
+          searchResults: 'Вы ничего не нашли',
+        });
+      }
+    }
+  };
+
+  render() {
+    const inputStyle = {
+      width: '521px', 
+      height: '50px',
+      fontFamily:'Arial',
+      fontSize:'16px'
+    }
+    return (
+      <div>
+        <input
+          style={inputStyle}
+          type="text"
+          value={this.state.searchTerm}
+          onChange={this.handleInputChange}
+          onKeyPress={this.handleKeyPress}
+          placeholder="Введите запрос для поиска"
+        />
+        <div>
+          {this.state.searchResults}
+        </div>
+      </div>
+    );
+  }
+}
+
+
+
+
+const containerStyle = {
+  position: 'fixed',
+  top: '10px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+};
+
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+
+// Добавляем SearchComponent в текущий контейнер
 root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+  <div style={containerStyle}>
+    <SearchComponent />
+  </div>
 );
