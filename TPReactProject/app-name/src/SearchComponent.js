@@ -1,11 +1,12 @@
 import React from 'react';
 
-class SearchComponent extends React.Component {
+
+export default class SearchComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       searchTerm: '',
-      searchResults: 'Вы ничего не нашли',
+      searchResults: [],
     };
   }
 
@@ -18,17 +19,18 @@ class SearchComponent extends React.Component {
   handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       if (this.state.searchTerm) {
+        const results = this.state.searchResults;
+        this.props.onChange(this.state.searchTerm); // Передача обновленного запроса в родительский компонент
         this.setState({
-          searchResults: this.state.searchTerm,
+          searchResults: results,
         });
       } else {
         this.setState({
-          searchResults: 'Вы ничего не нашли',
+          searchResults: [],
         });
       }
     }
   };
-
   render() {
     const inputStyle = {
       width: '521px', 
@@ -36,21 +38,28 @@ class SearchComponent extends React.Component {
       fontFamily:'Arial',
       fontSize:'16px'
     }
+    const containerStyle = {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      top: '10px', // Set height to full viewport height
+    };
     return (
-      <div>
+      <div style={containerStyle}>
         <input
           style={inputStyle}
           type="text"
           value={this.state.searchTerm}
           onChange={this.handleInputChange}
-          onKeyPress={this.handleKeyPress}
           placeholder="Введите запрос для поиска"
         />
         <div>
-          {this.state.searchResults}
+          {this.state.searchResults.map((result, index) => (
+            <div key={index}>{result}</div>
+          ))}
         </div>
       </div>
     );
   }
 }
-export default SearchComponent;
