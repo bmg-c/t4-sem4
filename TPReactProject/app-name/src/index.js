@@ -1,79 +1,65 @@
-import React,{ useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-//import SearchComponent from './SearchComponent';
-//import FilterComponent from './FilterComponent';
+import SearchComponent from './SearchComponent';
+import FilterComponentDisciplines from './FilterComponentsDisciplines';
+import SortingComponent from './SortingComponents';
+import ProductCard from './ProductsCard';
+import styled from 'styled-components';
 
-class SearchComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      searchTerm: '',
-      searchResults: 'Вы ничего не нашли',
-    };
-  }
+const customContainerStyle = {
+  position: 'fixed',
+  top: '70px',
+  left: '45%',
+};
 
-  handleInputChange = (event) => {
-    this.setState({
-      searchTerm: event.target.value,
-    });
-  };
+const ButtonContainer = styled.div`
+display: flex;
+margin-left: 1200px;
+margin-top: -60px;
+`;
+const StyledButton = styled.button`
+font-size: 16px;
+padding: 8px 12px;
+background-color: transparent;
+border: none;
+color: white;
+cursor: pointer;
+padding: 10px 10px;
+background-color: #36274C;
+`;
 
-  handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      if (this.state.searchTerm) {
-        this.setState({
-          searchResults: this.state.searchTerm,
-        });
-      } else {
-        this.setState({
-          searchResults: 'Вы ничего не нашли',
-        });
-      }
-    }
-  };
 
+class BlueRectangle1 extends React.Component{
   render() {
-    const inputStyle = {
-      width: '521px', 
-      height: '50px',
-      fontFamily:'Arial',
-      fontSize:'16px'
-    }
     return (
-      <div>
-        <input
-          style={inputStyle}
-          type="text"
-          value={this.state.searchTerm}
-          onChange={this.handleInputChange}
-          onKeyPress={this.handleKeyPress}
-          placeholder="Введите запрос для поиска"
-        />
-        <div>
-          {this.state.searchResults}
-        </div>
+      <div style={{ width: '100%', height: '75px', backgroundColor: '#3C388D', position: 'fixed', top: 0, left: 0 }}>
+        <SearchComponent/>
+        <ButtonContainer>
+        <StyledButton>Регистрация/вход</StyledButton>
+        </ButtonContainer>
+      </div>
+    );
+  }
+}
+class BlueRectangle extends React.Component {
+  render() {
+    return (
+      <div style={{ width: '100%', height: '50px', backgroundColor: '#3C388D', position: 'fixed', top: 75, left: 0 }}>
+        <SortingComponent />
+        <FilterComponentDisciplines customContainerStyle={customContainerStyle} />
       </div>
     );
   }
 }
 
 
-
-
-const containerStyle = {
-  position: 'fixed',
-  top: '10px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-};
-
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 
-// Добавляем SearchComponent в текущий контейнер
 root.render(
-  <div style={containerStyle}>
-    <SearchComponent />
+  <div style={{ paddingTop: '150px' }}>
+    <BlueRectangle1/>
+    <ProductCard/>
+    <BlueRectangle/>
   </div>
 );
