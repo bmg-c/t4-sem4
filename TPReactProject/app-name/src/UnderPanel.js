@@ -66,7 +66,7 @@ const PhoneNumber = styled(ContactItem)`
 `;
 export default function ContactSection() {
   return (
-    <div style={{ height: '20vh', overflow: 'auto' }}>
+    <div style={{ height: '40vh', overflow: 'auto' }}>
     <div style={{ width: '100%', height: '120px', backgroundColor: '#3C388D', position: 'fixed', bottom: 0, left: 0, display: 'flex', justifyContent: 'space-between' }}>
     <ContactContainer>
         <ContactInfo>
