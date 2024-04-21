@@ -1,6 +1,6 @@
 import React from 'react';
 
-class SearchComponent extends React.Component {
+export default class SearchComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,8 +36,15 @@ class SearchComponent extends React.Component {
       fontFamily:'Arial',
       fontSize:'16px'
     }
+    const containerStyle = {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      top: '10px', // Set height to full viewport height
+    };
     return (
-      <div>
+      <div style={containerStyle}>
         <input
           style={inputStyle}
           type="text"
@@ -53,4 +60,3 @@ class SearchComponent extends React.Component {
     );
   }
 }
-export default SearchComponent;
