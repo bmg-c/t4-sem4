@@ -25,6 +25,11 @@ async def change_user_password(user_id: int, password: str, repeat_password: str
     return await User.change_user_password(user_id, password)
 
 
+@router.put("/id/{user_id}/change_block_status")
+async def change_user_block_status(user_id: int, blocked: bool):
+    return await User.change_user_block_status(user_id, blocked)
+
+
 @router.get("/id/{user_id}", response_model=GetUser)
 async def get_user(user_id: int):
     return await User.get_user(user_id)
