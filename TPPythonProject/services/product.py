@@ -26,7 +26,7 @@ class Product:
     async def add_product(cls, data: AddProduct):
         async with new_session() as session:
             data_dict = data.model_dump()
-            product_field = ProductModel(**data_dict, author_id=0)  # добавить author_id после добавления пользователей
+            product_field = ProductModel(**data_dict, author_id=1, blocked=False)  # добавить author_id после добавления пользователей
             session.add(product_field)
             try:
                 await session.flush()
@@ -57,6 +57,20 @@ class Product:
             with open(path, "wb+") as buffer:
                 shutil.copyfileobj(photo.file, buffer)
             product_field.photo = path
+            await session.flush()
+            await session.commit()
+            return {}
+
+    @classmethod
+    async def change_product_block_status(cls, product_id: int, blocked: bool):
+        async with new_session() as session:
+            query = select(ProductModel).filter_by(id=product_id)
+            result = await session.execute(query)
+            product_field = result.scalars().first()
+            if product_field is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail="Product with this product id does not exist")
+            product_field.blocked = blocked
             await session.flush()
             await session.commit()
             return {}

@@ -17,8 +17,13 @@ async def add_product(data: AddProduct):
 
 
 @router.put("/id/{product_id}/addphoto")
-async def add_product_photo(product_id: int, photo: UploadFile = File(...)):
+async def change_product_photo(product_id: int, photo: UploadFile = File(...)):
     return await Product.change_product_photo(product_id, photo)
+
+
+@router.put("/{product_id}/change_block_status")
+async def change_product_block_status(product_id: int, blocked: bool):
+    return await Product.change_product_block_status(product_id, blocked)
 
 
 @router.delete("/{product_id}/delete")

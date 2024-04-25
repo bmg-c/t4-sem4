@@ -44,6 +44,7 @@ class ProductModel(Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     author_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
+    blocked: Mapped[bool]
     photo: Mapped[Optional[str]]
     vendor_code: Mapped[str] = mapped_column(unique=True)
     discipline: Mapped[str]
