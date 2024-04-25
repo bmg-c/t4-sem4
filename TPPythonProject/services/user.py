@@ -67,6 +67,21 @@ class User:
             return {}
 
     @classmethod
+    async def change_user_block_status(cls, user_id: int, blocked: bool):
+        async with new_session() as session:
+            query = select(UserModel).filter_by(id=user_id)
+            result = await session.execute(query)
+            user_field = result.scalars().first()
+            if user_field is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail="User with this user id does not exist")
+            user_field.blocked = blocked
+            await session.flush()
+            await session.commit()
+            return {}
+
+
+    @classmethod
     async def get_user(cls, user_id: int):
         async with new_session() as session:
             query = select(UserModel).filter_by(id=user_id)
@@ -75,7 +90,8 @@ class User:
             if user_field is None:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                     detail="User with this user id does not exist")
-            return GetUser(id=user_id, role=user_field.role, nickname=user_field.nickname, email=user_field.email)
+            return GetUser(id=user_id, blocked=user_field.blocked, role=user_field.role,
+                           nickname=user_field.nickname, email=user_field.email)
 
     @classmethod
     async def get_user_photo(cls, user_id: int):
