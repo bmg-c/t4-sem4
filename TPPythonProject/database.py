@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Date
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from typing import Optional
@@ -25,7 +25,18 @@ class UserModel(Model):
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
 
+    purchase_history: Mapped["PurchaseHistoryModel"] = relationship()
     products: Mapped[list["ProductModel"]] = relationship()
+
+
+class PurchaseHistoryModel(Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), ondelete="CASCADE")
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"))
+    order_number: Mapped[int]
+    date: Mapped[Date]
+
+    product: Mapped["ProductModel"] = relationship()
 
 
 class ProductModel(Model):
