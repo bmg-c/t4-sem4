@@ -1,8 +1,8 @@
-from sqlalchemy import ForeignKey, Date
+from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from typing import Optional
-
+from datetime import date
 
 engine = create_async_engine(
     "sqlite+aiosqlite:///./site.db"
@@ -30,13 +30,13 @@ class UserModel(Model):
 
 
 class PurchaseHistoryModel(Model):
+    __tablename__ = "purchase_history"
+
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), ondelete="CASCADE")
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     product_id: Mapped[int] = mapped_column(ForeignKey("product.id"))
     order_number: Mapped[int]
-    date: Mapped[Date]
-
-    product: Mapped["ProductModel"] = relationship()
+    date: Mapped[date]
 
 
 class ProductModel(Model):
@@ -50,8 +50,6 @@ class ProductModel(Model):
     name: Mapped[str]
     description: Mapped[Optional[str]]
     price: Mapped[float]
-
-    author: Mapped["UserModel"] = relationship()
 
 
 async def create_tables():
