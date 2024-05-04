@@ -5,7 +5,7 @@ class AddUser(BaseModel):
     nickname: str
     email: str
     password: str
-    repeat_password: str
+
 
 
 class GetUser(BaseModel):

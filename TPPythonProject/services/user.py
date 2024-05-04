@@ -10,21 +10,21 @@ import os
 
 
 class User:
-    @classmethod
-    async def add_user(cls, data: AddUser):
-        async with new_session() as session:
-            data_dict = data.model_dump()
-            user_field = UserModel(nickname=data_dict["nickname"], email=data_dict["email"],
-                                   password=data_dict["password"], blocked=False, role="Студент")
-            session.add(user_field)
-            try:
-                await session.flush()
-            except IntegrityError:
-                raise HTTPException(status.HTTP_400_BAD_REQUEST,
-                                    "Can't add user to the database, possible: email exists")
-            await session.commit()
-            return GetUser(id=user_field.id, blocked=user_field.blocked, role=user_field.role,
-                           nickname=user_field.nickname, email=user_field.email)
+    # @classmethod
+    # async def add_user(cls, data: AddUser):
+    #     async with new_session() as session:
+    #         data_dict = data.model_dump()
+    #         user_field = UserModel(nickname=data_dict["nickname"], email=data_dict["email"],
+    #                                password=data_dict["password"], blocked=False, role="Студент")
+    #         session.add(user_field)
+    #         try:
+    #             await session.flush()
+    #         except IntegrityError:
+    #             raise HTTPException(status.HTTP_400_BAD_REQUEST,
+    #                                 "Can't add user to the database, possible: email exists")
+    #         await session.commit()
+    #         return GetUser(id=user_field.id, blocked=user_field.blocked, role=user_field.role,
+    #                        nickname=user_field.nickname, email=user_field.email)
 
     @classmethod
     async def change_user_nickname(cls, user_id: int, nickname: str):

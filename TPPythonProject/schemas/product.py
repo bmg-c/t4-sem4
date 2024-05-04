@@ -13,7 +13,6 @@ class AddProduct(BaseModel):
     price: float = Field(ge=1.0, le=100000.0)
 
 
-
 class AddProductInform(BaseModel):
     product_id: int
     author_id: int
