@@ -23,6 +23,7 @@ class GetProduct(BaseModel):
     photo: Optional[str]
     id: int
     author_id: int
+    blocked: bool
     vendor_code: str
     discipline: str
     name: str

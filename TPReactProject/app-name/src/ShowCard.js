@@ -1,84 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-import logo from './Logo.png'; // Импорт изображения логотипа
-import bankLogo from './BankLogo1.png';
-import bankLogo2 from './BankLogo2.png';
-import bankLogo3 from './BankLogo3.png';
-import messengLogo from './MassengLogo1.png';
-import messengLogo2 from './MassengLogo2.png';
-
-class SearchComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      searchTerm: '',
-      searchResults: 'Вы ничего не нашли',
-    };
-  }
-
-  handleInputChange = (event) => {
-    this.setState({
-      searchTerm: event.target.value,
-    });
-  };
-
-  handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      if (this.state.searchTerm) {
-        this.setState({
-          searchResults: this.state.searchTerm,
-        });
-      } else {
-        this.setState({
-          searchResults: 'Вы ничего не нашли',
-        });
-      }
-    }
-  };
-
-  render() {
-    const inputStyle = {
-      width: '521px',
-      height: '35px',
-      fontFamily: 'Arial',
-      fontSize: '16px',
-      margin: '5px auto', // Центрирование и добавление верхнего отступа
-    };
-
-    const containerStyle = {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    };
-
-    return (
-      <div style={containerStyle}>
-        <div>
-          <input
-            style={inputStyle}
-            type="text"
-            value={this.state.searchTerm}
-            onChange={this.handleInputChange}
-            onKeyPress={this.handleKeyPress}
-            placeholder="Введите запрос для поиска"
-          />
-          <div>{this.state.searchResults}</div>
-        </div>
-      </div>
-    );
-  }
-}
+//import logo from './Logo.png'; // Импорт изображения логотипа
+import ContactSection from './UnderPanel';
+import logo1 from './Logo.png';
+import logo2 from './Logo2.png';
 
 const CardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  position: relative; /* Добавляем позиционирование */
 `;
 
 const Card = styled.div`
-  margin-top: 30px;
+  margin-top: -30px;
   display: flex;
   justify-content: space-between;
   width: ${({ cardWidth }) => cardWidth || '900px'};
@@ -158,86 +93,9 @@ const EmailInput = styled.input`
   margin-right: 10px;
 `;
 
-const ContactContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  background-color: #3c388d;
-  padding: 20px;
-  width: 97,5%;
-  color: white;
-  border-radius: 8px;
-  flex-grow: 1; 
-`;
 
-const ContactInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  margin-right: 130px;
-`;
 
-const ContactHeader = styled.p`
-  font-size: 16px;
-  margin-left: 600px;
-  white-space: nowrap;
-`;
 
-const ContactItem = styled.p`
-  font-size: 16px;
-  margin: 0px 0; /* Уменьшаем верхний и нижний отступы между элементами контактной информации */
-`;
-const ContactContainer0 = styled.div`
-
-  align-items: center;
-  
-`;
-const ContactContainer1 = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: 520px;
-  
-`;
-const LogoBank = styled.img`
-  width: 50px; 
-  height: auto; 
-  margin-left: 10px;
-`;
-const Logomesseng = styled.img`
-  width: 50px; 
-  height: auto; 
-  margin-left: 10px;
-`;
-const SmallLogo = styled.img`
-  width: 40px;
-  height: auto;
-`;
-const PhoneNumber = styled(ContactItem)`
-  margin-right: 10px; /* Устанавливаем отступ справа для номера телефона */
-`;
-function ContactSection() {
-  return (
-    <ContactContainer>
-        <ContactInfo>
-          <ContactItem>Контактная информация: </ContactItem>
-          <ContactContainer0>
-          <PhoneNumber>+7(950)-590-90-30</PhoneNumber>
-          <ContactItem>generalTutor@yandex.ru</ContactItem>
-          <SmallLogo src={messengLogo} alt="Логотип 1" />
-          <Logomesseng src={messengLogo2} alt="Логотип 2" />
-          </ContactContainer0>
-        </ContactInfo>
-        <ContactInfo>
-          <ContactHeader>Информация о способах оплаты</ContactHeader>
-          <ContactContainer1>
-          <LogoBank src={bankLogo} alt="Логотип 1" />
-          <LogoBank src={bankLogo2} alt="Логотип 2" />
-          <LogoBank src={bankLogo3} alt="Логотип 3" />
-          </ContactContainer1>
-        </ContactInfo>
-      </ContactContainer>
-  );
-}
 function ProductCard({ cardWidth }) {
   const addToCart = () => {
     alert('Оформление товаров!');
@@ -266,53 +124,87 @@ function ProductCard({ cardWidth }) {
     </CardContainer>
   );
 }
-const Logo = styled.img`
-  width: 100px; // Устанавливаем ширину логотипа
-  height: auto; // Автоматически рассчитываем высоту
-  margin-left: 20px; // Устанавливаем отступ слева
-`;
-const ButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: 20px; // Устанавливаем отступ справа для кнопки
-`;
-const BlueRectangle1Container = styled.div`
-  width: 100%;
-  height: 100%;
-  margin-top: 0;
-`;
+
+
 
 const StyledButton = styled.button`
-  font-size: 16px;
-  padding: 8px 12px; // Устанавливаем отступы для кнопки
-  background-color: transparent;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 10px 10px;
-  background-color: #36274C;
+font-size: 16px;
+padding: 8px 12px;
+background-color: transparent;
+border: none;
+color: white;
+margin-right: 200px;
+cursor: pointer;
+padding: 10px 10px;
+background-color: #36274C;
 `;
 
 
-class BlueRectangle2 extends React.Component {
+const Logo = styled.img`
+  height: 70px;
+  width: 100px;
+  margin-left: 10px;
+  margin-top: 10px;
+`;
+const InlineText1 = styled.div`
+  display: flex;
+  justify-content: space-between;
+  height: 40px; 
+  
+`;
+const ContactInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 700px;
+  margin-top: 15px;
+`;
+const PhoneNumber = styled.p`
+  font-size: 16px;
+  color: white;
+  margin: 0px 0;
+  margin-right: 10px;
+`;
+
+const ContactDetails = styled.p`
+  font-size: 16px;
+  color: white;
+  margin: 0px 0;
+`;
+const Logo2 = styled.img`
+  height: 30px; 
+  margin-top: 50px;
+  padding: 2px 2px;
+  background-color: white;
+`;
+class BlueRectangleCard extends React.Component{
   render() {
     return (
-      <BlueRectangle1Container>
-        <div style={{ width: '100%', height: '75px', backgroundColor: '#3C388D', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 1 }}> {/* Убираем position: fixed; и добавляем zIndex */}
-          <div>
-            <Logo src={logo} alt="Логотип" />
-          </div>
-          <SearchComponent />
-          <ButtonContainer>
-            <StyledButton>Регистрация/вход</StyledButton>
-          </ButtonContainer>
-        </div>
-        <ProductCard cardWidth="1009px" />
-        <ContactSection />
-      </BlueRectangle1Container>
-      
+      <div style={{width: '100%', height: '100px', backgroundColor: '#3C388D', position: 'fixed', top: 0, left: 0 }}>
+        <InlineText1>
+        <Logo src={logo1} alt="Логотип 1" />
+        <Logo2 src={logo2} alt="Логотип 2" />
+        <ContactInfoContainer>
+        <ContactDetails>Контактные данные:</ContactDetails>
+        <PhoneNumber>+88525485476</PhoneNumber>
+        </ContactInfoContainer>
+        <StyledButton>Регистрация/вход</StyledButton>
+        </InlineText1>
+      </div>
     );
   }
 }
 
-export default BlueRectangle2;
+
+
+export default class BigCard extends React.Component{
+  render(){
+    return(
+      <div style={{ paddingTop: '150px' }}>
+      <BlueRectangleCard/>
+      <ProductCard/>
+      <ContactSection/>
+      </div>
+    );
+  }
+}

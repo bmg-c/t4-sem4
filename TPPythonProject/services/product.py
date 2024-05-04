@@ -23,10 +23,10 @@ def get_select_sorted_by(sel: Select, sort_by: str) -> Select:
 
 class Product:
     @classmethod
-    async def add_product(self, data: AddProduct):
+    async def add_product(cls, data: AddProduct):
         async with new_session() as session:
             data_dict = data.model_dump()
-            product_field = ProductModel(**data_dict, author_id=0)  # добавить author_id после добавления пользователей
+            product_field = ProductModel(**data_dict, author_id=1, blocked=False)  # добавить author_id после добавления пользователей
             session.add(product_field)
             try:
                 await session.flush()
@@ -36,7 +36,7 @@ class Product:
             return AddProductInform(product_id=product_field.id, author_id=product_field.author_id)
 
     @classmethod
-    async def add_product_photo(self, product_id: int, photo: UploadFile):
+    async def change_product_photo(cls, product_id: int, photo: UploadFile):
         if photo.content_type != "image/png" and photo.content_type != "image/jpeg":
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="File should be one of these image types: png, jpg, jpeg")
 
@@ -62,7 +62,21 @@ class Product:
             return {}
 
     @classmethod
-    async def del_product(self, product_id: int):
+    async def change_product_block_status(cls, product_id: int, blocked: bool):
+        async with new_session() as session:
+            query = select(ProductModel).filter_by(id=product_id)
+            result = await session.execute(query)
+            product_field = result.scalars().first()
+            if product_field is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail="Product with this product id does not exist")
+            product_field.blocked = blocked
+            await session.flush()
+            await session.commit()
+            return {}
+
+    @classmethod
+    async def del_product(cls, product_id: int):
         async with new_session() as session:
             query = select(ProductModel).filter_by(id=product_id)
             result = await session.execute(query)
@@ -79,7 +93,7 @@ class Product:
             return {}
 
     @classmethod
-    async def get_product(self, product_id: int):
+    async def get_product(cls, product_id: int):
         async with new_session() as session:
             query = select(ProductModel).filter_by(id=product_id)
             result = await session.execute(query)
@@ -89,7 +103,7 @@ class Product:
             return product_field
 
     @classmethod
-    async def get_product_by_vendor_code(self, vendor_code: str):
+    async def get_product_by_vendor_code(cls, vendor_code: str):
         async with new_session() as session:
             query = select(ProductModel).filter_by(vendor_code=vendor_code)
             result = await session.execute(query)
@@ -99,7 +113,7 @@ class Product:
             return product_field
 
     @classmethod
-    async def get_product_by_author(self, author_id: int):
+    async def get_product_by_author(cls, author_id: int):
         async with new_session() as session:
             query = select(ProductModel).filter_by(author_id=author_id)
             result = await session.execute(query)
@@ -107,7 +121,7 @@ class Product:
             return product_field
 
     @classmethod
-    async def get_all_products(self):
+    async def get_all_products(cls):
         async with new_session() as session:
             query = select(ProductModel)
             result = await session.execute(query)
@@ -116,7 +130,7 @@ class Product:
 
 
     @classmethod
-    async def get_all_products_by_search_query(self, search_query: str):
+    async def get_all_products_by_search_query(cls, search_query: str):
         async with new_session() as session:
             query = select(ProductModel).filter(ProductModel.name.contains(search_query))
             result = await session.execute(query)
@@ -125,7 +139,7 @@ class Product:
 
 
     @classmethod
-    async def get_all_products_by_search_query_sorted_by(self, search_query: str, sort_by: str):
+    async def get_all_products_by_search_query_sorted_by(cls, search_query: str, sort_by: str):
         async with new_session() as session:
             query = select(ProductModel).filter(ProductModel.name.contains(search_query))
             query = get_select_sorted_by(query, sort_by)
@@ -135,7 +149,7 @@ class Product:
 
 
     @classmethod
-    async def get_product_photo(self, product_id: int):
+    async def get_product_photo(cls, product_id: int):
         async with new_session() as session:
             query = select(ProductModel).filter_by(id=product_id)
             result = await session.execute(query)
@@ -148,7 +162,7 @@ class Product:
                 return FileResponse(product_field.photo)
 
     @classmethod
-    async def get_all_products_sorted_by(self, sort_by: str) -> Sequence[ProductModel]:
+    async def get_all_products_sorted_by(cls, sort_by: str) -> Sequence[ProductModel]:
         async with new_session() as session:
             query = select(ProductModel)
             query = get_select_sorted_by(query, sort_by)

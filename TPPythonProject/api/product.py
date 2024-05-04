@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, File, UploadFile, status, HTTPException
 from fastapi.responses import FileResponse
-from schemas import AddProduct, AddProductInform, GetProduct, Inform
+from schemas import AddProduct, AddProductInform, GetProduct
 from services import Product
-from typing import Optional, Annotated, Dict, Union
+from typing import Optional
 
 router = APIRouter(tags=["Product"], prefix="/product")
 
@@ -17,8 +17,13 @@ async def add_product(data: AddProduct):
 
 
 @router.put("/id/{product_id}/addphoto")
-async def add_product_photo(product_id: int, photo: UploadFile = File(...)):
-    return await Product.add_product_photo(product_id, photo)
+async def change_product_photo(product_id: int, photo: UploadFile = File(...)):
+    return await Product.change_product_photo(product_id, photo)
+
+
+@router.put("/{product_id}/change_block_status")
+async def change_product_block_status(product_id: int, blocked: bool):
+    return await Product.change_product_block_status(product_id, blocked)
 
 
 @router.delete("/{product_id}/delete")
