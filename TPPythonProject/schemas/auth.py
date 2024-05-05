@@ -1,16 +1,13 @@
 from typing_extensions import Annotated
-from pydantic import BaseModel, StringConstraints, EmailStr
-
-
-PasswordStr = Annotated[str, StringConstraints(min_length=8, max_length=16,
-                     pattern=r'^[A-Za-z0-9!#$%&*+-.<=>?@^_]+$')]
+from pydantic import BaseModel, EmailStr
+from .field_types import PasswordStr
 
 
 class UserCookie(BaseModel):
     id: int
     email: EmailStr
-    blocked: bool
-    role: str
+    # blocked: bool
+    # role: Role
     nickname: str
 
 

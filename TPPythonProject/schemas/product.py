@@ -1,13 +1,12 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from typing import Optional
+from .field_types import Discipline
 
-
-disciplines = Literal["Математика", "Программирование", "ООП"]
 
 
 class AddProduct(BaseModel):
     vendor_code: str
-    discipline: disciplines
+    discipline: Discipline
     name: str
     description: Optional[str] = None
     price: float = Field(ge=1.0, le=100000.0)
