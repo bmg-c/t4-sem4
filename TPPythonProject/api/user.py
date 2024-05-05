@@ -8,12 +8,12 @@ from schemas import AddUser, GetUser
 router = APIRouter(tags=["User"], prefix="/user")
 
 
-@router.post("/add", response_model=GetUser)
-async def add_user(data: AddUser):
-    data_dict = data.model_dump()
-    if data_dict["password"] != data_dict["repeat_password"]:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Passwords do not match")
-    return await User.add_user(data)
+# @router.post("/add", response_model=GetUser)
+# async def add_user(data: AddUser):
+#     data_dict = data.model_dump()
+#     if data_dict["password"] != data_dict["repeat_password"]:
+#         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Passwords do not match")
+#     return await User.add_user(data)
 
 
 @router.put("/id/{user_id}/change_nickname")
