@@ -65,7 +65,10 @@ class Auth:
     async def get_user_cookie_contents(cls, request: Request):
         token = request.cookies.get('token')
         if token is None:
-            return JSONResponse(Inform(detail="Login cookie was not found").model_dump(), 400)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Login cookie was not found"
+            )
         key = 'manilovefishing'
         cookie: UserCookie = jwt.decode(token, key, algorithms=["HS256"])
         return cookie
