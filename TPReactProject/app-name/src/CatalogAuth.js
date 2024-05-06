@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-// import AllproductsCard from './ProductsCard';
-import ProductList from './RequestProductsWithFilters';
+import ProductList1 from './AuthRequstProducts';
 import logo1 from './Logo.png';
-import Auth from './Auth';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ContactSection from './UnderPanel';
 
 const Logo = styled.img`
@@ -58,41 +56,37 @@ const StyledButton = styled.button`
   transform: translate(0, -50%);
 `;
 
-
 function BlueRectangle1() {
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-
-  const toggleAuthModal = () => {
-    setIsAuthOpen(!isAuthOpen);
+  const navigate = useNavigate();
+  const handleLogoClick = () => {
+    navigate('/catalog');
   };
-
+  const handlePersAccClick = () => {
+    navigate('/percacc');
+  };
   return (
     <div style={{ position: 'relative', zIndex: 0 }}>
       <div style={{ width: '100%', height: '150px', backgroundColor: '#3C388D', position: 'fixed', top: 0, left: 0, zIndex: 1 }}>
         <InlineText1>
-          <Logo src={logo1} alt="Логотип 1" />
+          <Logo src={logo1} alt="Логотип 1" onClick={handleLogoClick} />
           <ContactInfoContainer>
             <ContactDetails>Контактные данные:</ContactDetails>
             <PhoneNumber>+88525485476</PhoneNumber>
           </ContactInfoContainer>
-          <StyledButton onClick={toggleAuthModal}>Регистрация/вход</StyledButton>
+          <div><StyledButton onClick={handlePersAccClick}>Личный кабинет</StyledButton></div>
         </InlineText1>
       </div>
-      {isAuthOpen && <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 2 }}>
-        <Auth onCloseModal={toggleAuthModal} />
-      </div>}
     </div>
   );
 }
 
 
-
-export default class CatalogPage extends React.Component{
+export default class CatalogPageAuth extends React.Component{
   render(){
     return(
       <div style={{ paddingTop: '150px' }}>
       <BlueRectangle1 />
-      <ProductList/>
+      <ProductList1 />
       <ContactSection/>
       </div>
     );

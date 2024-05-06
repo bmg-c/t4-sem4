@@ -179,12 +179,49 @@ const SortMenu = ({ cardTitles, onSort }) => {
 };
 
 
+// const ProductCard = ({ products }) => {
+//   const navigate = useNavigate();
+
+//   const handleDetailsClick = (product) => {
+//     navigate(`/product/${product.id}`);
+//   };
+
+//   return (
+//     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', padding: '0 10px' }}>
+//       {products.map((product) => {
+//         const photoUrl = `http://127.0.0.1:8000/api/product/id/${product.id}/photo`
+
+//         console.log('Photo URL:', photoUrl); // Добавляем console.log()
+//         return (
+//           <Card key={product.id} style={{ width: '20%', minHeight: '200px', marginBottom: '1rem' }}>
+//             <CardText0 style={{ backgroundImage: `url(${photoUrl})` }} />
+//             <CardContent>
+//               <CardTitle>{product.name}</CardTitle>
+//               <CardText>{product.description}</CardText>
+//               <CardText>{product.discipline}</CardText>
+//               <Price>{product.price}</Price>
+//               <ButtonGroup>
+//                 <Button>Оформить</Button>
+//                 <DetailsButton onClick={() => handleDetailsClick(product)}>
+//                   Подробнее
+//                 </DetailsButton>
+//               </ButtonGroup>
+//             </CardContent>
+//           </Card>
+//         );
+//       })}
+//     </div>
+//   );
+// };
+
 const ProductCard = ({ products }) => {
   const navigate = useNavigate();
 
-  const handleDetailsClick = (product) => {
-    navigate(`/product/${product.id}`);
+  const handleDetailCardClick = (product) =>  {
+    navigate(`/productauth/${product.id}`);
   };
+
+  
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', padding: '0 10px' }}>
       {products.map((product) => {
@@ -200,7 +237,7 @@ const ProductCard = ({ products }) => {
               <Price>{product.price}</Price>
               <ButtonGroup>
                 <Button>Оформить</Button>
-                <DetailsButton onClick={() => handleDetailsClick(product)}>
+                <DetailsButton onClick={() => handleDetailCardClick(product)}>
                   Подробнее
                 </DetailsButton>
               </ButtonGroup>
@@ -213,7 +250,7 @@ const ProductCard = ({ products }) => {
 };
 
 
-const ProductList = () => {
+const ProductList1 = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedDiscipline, setSelectedDiscipline] = useState('Дисциплина');
@@ -262,4 +299,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default ProductList1;

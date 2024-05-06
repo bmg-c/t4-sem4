@@ -2,32 +2,50 @@ import React from 'react';
 import styled from 'styled-components';
 import ContactSection from './UnderPanel';
 import logo1 from './Logo.png';
+import { useNavigate } from 'react-router-dom';
 
 
 const StyledButton = styled.button`
-font-size: 16px;
-background-color: transparent;
-border: none;
-color: white;
-border-radius: 4px;
-margin-right: 80px;
-cursor: pointer;
-padding: 10px 10px;
-background-color: #36274C;
+  font-size: 16px;
+  padding: 8px 12px;
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 10px 10px;
+  background-color: #36274C;
+  position: fixed;
+  top: 30px; /* Изменяем значение top, чтобы кнопка была ровно над SortMenuContainer */
+  right: 185px;
+  transform: translate(0, -50%);
 `;
+// const StyledButton2 = styled.button`
+// font-size: 16px;
+// background-color: transparent;
+// border: none;
+// color: white;
+// margin-right: 270px;
+// margin-top: 15px;
+// white-space: nowrap;
+// cursor: pointer;
+// border-radius: 4px;
+// padding: 10px 10px;
+// background-color: #36274C;
+// `;
 
 const StyledButton2 = styled.button`
-font-size: 16px;
-background-color: transparent;
-border: none;
-color: white;
-margin-left: 230px;
-margin-top: 15px;
-white-space: nowrap;
-cursor: pointer;
-border-radius: 4px;
-padding: 10px 10px;
-background-color: #36274C;
+  font-size: 16px;
+  background-color: transparent;
+  border: none;
+  color: white;
+  margin-right: 150px;
+  margin-top: 50px;
+  white-space: nowrap;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 10px 10px;
+  background-color: #36274C;
+  margin-left: 80px; /* Added margin-left to move the buttons to the right */
 `;
 
 
@@ -69,18 +87,23 @@ const InlineText2 = styled.div`
   
   
 `;
-class BlueRectangleCardLC extends React.Component{
-  render() {
+function BlueRectangleCardLC(){
+    const navigate = useNavigate();
+    const handleLogoClick = () => {
+      navigate('/catalog');
+    };
+    const handlePersAccClick = () => {
+      navigate('/percacc');
+    };
     return (
-      <div style={{width: '100%', height: '100px', backgroundColor: '#3C388D', position: 'fixed', top: 0, left: 0 }}>
+      <div style={{width: '100%', height: '150px', backgroundColor: '#3C388D', position: 'fixed', top: 0, left: 0 }}>
         <InlineText1>
-        <Logo src={logo1} alt="Логотип 1" />
-        
+        <Logo src={logo1} alt="Логотип 1" onClick={handleLogoClick} />
         <ContactInfoContainer>
         <ContactDetails>Контактные данные:</ContactDetails>
         <PhoneNumber>+88525485476</PhoneNumber>
         </ContactInfoContainer>
-        <div><StyledButton>Регистрация/вход</StyledButton></div>
+        <div><StyledButton onClick={handlePersAccClick}>Личный кабинет</StyledButton></div>
         </InlineText1>
         <InlineText2>
         <div><StyledButton2>Личные данные</StyledButton2></div>
@@ -90,8 +113,8 @@ class BlueRectangleCardLC extends React.Component{
         </InlineText2>
       </div>
     );
-  }
 }
+
 
 const CardContainer = styled.div`
     background-color: #3C388D;
@@ -158,6 +181,14 @@ const Inline= styled.div`
   justify-content: space-between;
   margin-bottom: 8px;
 `;
+
+
+const ContactSectionContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
 class LCData extends React.Component{
   render() {
     return (
@@ -183,9 +214,11 @@ export default class Percacc extends React.Component{
     render(){
       return(
         <div style={{ paddingTop: '150px' }}>
-        <BlueRectangleCardLC/>
-        <LCData/>
-        <ContactSection/>
+          <BlueRectangleCardLC/>
+          <LCData/>
+        <ContactSectionContainer>
+          <ContactSection/>
+        </ContactSectionContainer>
         </div>
       );
     }

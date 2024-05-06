@@ -12,12 +12,12 @@ const ContactContainer = styled.div`
   justify-content: space-between;
   background-color: #3c388d;
   padding: 20px;
-  width: 97,5%;
+  width: 97.5%;
   color: white;
   border-radius: 8px;
-  flex-grow: 1; 
+  flex-grow: 1;
 `;
-
+//margin-bottom: 20px;
 const ContactInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -66,8 +66,8 @@ const PhoneNumber = styled(ContactItem)`
 `;
 export default function ContactSection() {
   return (
-    <div style={{ height: '40vh', overflow: 'auto' }}>
-    <div style={{ width: '100%', height: '120px', backgroundColor: '#3C388D', position: 'fixed', bottom: 0, left: 0, display: 'flex', justifyContent: 'space-between' }}>
+    // <div style={{ height: '40vh', overflow: 'auto' }}>
+    <div style={{ width: '100%', height: '120px', backgroundColor: '#3C388D', position: 'f', bottom: 0, left: 0, display: 'flex', justifyContent: 'space-between' }}>
     <ContactContainer>
         <ContactInfo>
           <ContactItem>Контактная информация: </ContactItem>
@@ -87,7 +87,6 @@ export default function ContactSection() {
           </ContactContainer1>
         </ContactInfo>
       </ContactContainer>
-    </div>
     </div>
   );
 }
