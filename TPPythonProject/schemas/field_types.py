@@ -18,7 +18,7 @@ ProductName = Annotated[str, StringConstraints(min_length=1, max_length=32)]
 
 ProductDescrition = Optional[Annotated[str, StringConstraints(min_length=1, max_length=600)]]
 
-Nickname = Annotated[str, StringConstraints(min_length=1, max_length=24)]
+Nickname = Annotated[str, StringConstraints(min_length=0, max_length=24)]
 
 Id = Field(ge=0)
 
