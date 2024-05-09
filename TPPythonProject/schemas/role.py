@@ -6,3 +6,7 @@ class ChangeRole(BaseModel):
     email: EmailStr
     new_role: Role
 
+class ChangeUserBlockStatus(BaseModel):
+    email: EmailStr
+    new_blocked: bool
+
