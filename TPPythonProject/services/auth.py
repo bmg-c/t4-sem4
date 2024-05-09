@@ -1,10 +1,9 @@
-from fastapi import UploadFile, HTTPException, status, Response, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import HTTPException, status, Response, Request
+from fastapi.responses import JSONResponse
 from database import new_session, UserModel
 from schemas import Register, GetUser, Login, UserCookie, Inform
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, delete, Select
-from uuid import uuid4
+from sqlalchemy import select
 import jwt
 
 
@@ -21,8 +20,7 @@ class Auth:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST,
                                     "Can't add user to the database, possible: email exists")
             await session.commit()
-            return GetUser(id=user_field.id, blocked=user_field.blocked, role=user_field.role,
-                           nickname=user_field.nickname, email=user_field.email)
+            return GetUser(**user_field.__dict__)
     
     @classmethod
     async def login(cls, data: Login):
@@ -35,16 +33,12 @@ class Auth:
                                     detail="This user does not exist")
 
             key = 'manilovefishing'
-            response = JSONResponse(GetUser(id=user.id, blocked=user.blocked, role=user.role,
-                           nickname=user.nickname, email=user.email).model_dump(), 200)
+            response = JSONResponse(GetUser(**user.__dict__).model_dump(), 200)
             response.set_cookie(
                 key='token',
                 value=jwt.encode(
                     payload=UserCookie(
                         id=user.id,
-                        blocked=user.blocked,
-                        role=user.role,
-                        nickname=user.nickname,
                         email=user.email).model_dump(), 
                     key=key,
                     algorithm='HS256'

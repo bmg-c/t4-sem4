@@ -9,6 +9,8 @@ from schemas import AddProduct, AddProductInform
 from uuid import uuid4
 import shutil
 
+VENDOR_CODE_LENGTH = 6
+
 
 def get_select_sorted_by(sel: Select, sort_by: str) -> Select:
     match sort_by:
@@ -20,6 +22,17 @@ def get_select_sorted_by(sel: Select, sort_by: str) -> Select:
             return sel.order_by(ProductModel.name)
 
 
+def id_to_vendor_code(id: int) -> str:
+    id_str = str(id)
+    length = len(id_str)
+
+    out = ""
+    for i in range(VENDOR_CODE_LENGTH - length):
+        out += "0"
+    out += id_str
+
+    return out
+
 
 class Product:
     @classmethod
@@ -28,7 +41,10 @@ class Product:
             data_dict = data.model_dump()
             product_field = ProductModel(**data_dict, author_id=1, blocked=False)  # добавить author_id после добавления пользователей
             session.add(product_field)
+            product_field.vendor_code = "000000"
             try:
+                await session.flush()
+                product_field.vendor_code = id_to_vendor_code(product_field.id)
                 await session.flush()
             except IntegrityError:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST, "Can't add product to the database, possible: vendor_code exists")

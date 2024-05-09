@@ -13,16 +13,16 @@ async def register(data: Register):
     return await Auth.register(data)
 
 
-@router.post("/login", response_model=GetUser, status_code=status.HTTP_200_OK)
+@router.put("/login", response_model=GetUser, status_code=status.HTTP_200_OK)
 async def login(data: Login):
     return await Auth.login(data)
 
 
-@router.post("/logout", response_model=Inform, status_code=status.HTTP_200_OK)
+@router.put("/logout", response_model=Inform, status_code=status.HTTP_200_OK)
 async def logout(request: Request, response: Response):
     return await Auth.logout(request, response)
 
 
-@router.post("/get_logged_user", response_model=UserCookie, status_code=status.HTTP_200_OK)
+@router.get("/get_logged_user", response_model=UserCookie, status_code=status.HTTP_200_OK)
 async def get_user_cookie_contents(request: Request):
     return await Auth.get_user_cookie_contents(request)

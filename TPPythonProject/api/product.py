@@ -11,8 +11,6 @@ router = APIRouter(tags=["Product"], prefix="/product")
 
 @router.post("/add", response_model=AddProductInform, status_code=status.HTTP_201_CREATED)
 async def add_product(data: AddProduct):
-    if not data.vendor_code.isnumeric():
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Vendor code should be a number")
     return await Product.add_product(data)
 
 

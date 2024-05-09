@@ -4,7 +4,6 @@ from .field_types import Discipline, Id, PhotoPath, Price, ProductDescrition, Pr
 
 
 class AddProduct(BaseModel):
-    vendor_code: VendorCode
     discipline: Discipline
     name: ProductName
     description: ProductDescrition = None

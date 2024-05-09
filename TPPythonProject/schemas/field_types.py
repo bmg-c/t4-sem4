@@ -20,7 +20,7 @@ ProductDescrition = Optional[Annotated[str, StringConstraints(min_length=1, max_
 
 Nickname = Annotated[str, StringConstraints(min_length=0, max_length=24)]
 
-Id = Field(ge=0)
+Id = Field(ge=1)
 
 PhotoPath = Optional[str]
 
