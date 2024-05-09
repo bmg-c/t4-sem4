@@ -1,30 +1,29 @@
 from pydantic import BaseModel
-from typing import Optional
-from .field_types import Discipline, Price
+from .field_types import Discipline, Id, PhotoPath, Price, ProductDescrition, ProductName, VendorCode
 
 
 
 class AddProduct(BaseModel):
-    vendor_code: str
+    vendor_code: VendorCode
     discipline: Discipline
-    name: str
-    description: Optional[str] = None
+    name: ProductName
+    description: ProductDescrition = None
     price: float = Price
 
 
 class AddProductInform(BaseModel):
-    product_id: int
-    author_id: int
+    product_id: int = Id
+    author_id: int = Id
 
 
 class GetProduct(BaseModel):
-    photo: Optional[str]
-    id: int
-    author_id: int
+    photo: PhotoPath
+    id: int = Id
+    author_id: int = Id
     blocked: bool
-    vendor_code: str
+    vendor_code: VendorCode
     discipline: Discipline
-    name: str
-    description: Optional[str] = None
+    name: ProductName
+    description: ProductDescrition = None
     price: float = Price
 

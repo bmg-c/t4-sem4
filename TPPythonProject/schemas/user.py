@@ -1,16 +1,10 @@
-from pydantic import BaseModel
-
-
-class AddUser(BaseModel):
-    nickname: str
-    email: str
-    password: str
-
+from pydantic import BaseModel, EmailStr
+from .field_types import Id, Nickname, Role
 
 
 class GetUser(BaseModel):
-    id: int
+    id: int = Id
     blocked: bool
-    role: str
-    nickname: str
-    email: str
+    role: Role
+    nickname: Nickname
+    email: EmailStr

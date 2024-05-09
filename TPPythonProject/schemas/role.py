@@ -1,6 +1,5 @@
-from typing import Optional
 from pydantic import BaseModel, EmailStr
-from .field_types import Role, Price, Discipline
+from .field_types import Id, ProductDescrition, ProductName, Role, Price, Discipline
 
 
 class ChangeRole(BaseModel):
@@ -14,9 +13,9 @@ class ChangeUserBlockStatus(BaseModel):
 
 
 class ChangeProductContents(BaseModel):
-    product_id: int
+    product_id: int = Id
     price: float = Price
-    name: str
-    description: Optional[str]
+    name: ProductName
+    description: ProductDescrition
     discipline: Discipline
 
