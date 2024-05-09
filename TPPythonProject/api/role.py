@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Request
-from schemas import ChangeRole, Inform, ChangeUserBlockStatus
+from schemas import ChangeRole, Inform, ChangeUserBlockStatus, ChangeProductContents
 from services import Role
 
 
@@ -19,3 +19,10 @@ async def change_role_unsafe(data: ChangeRole):
 async def change_user_block_status(request: Request, data: ChangeUserBlockStatus):
     return await Role.change_user_block_status(request, data)
 
+@router.post("/admin/change_product_contents", response_model=Inform, status_code=status.HTTP_200_OK)
+async def admin_change_product_contents(request: Request, data: ChangeProductContents):
+    return await Role.change_product_contents(request, data)
+
+@router.post("/tutor/change_product_contents", response_model=Inform, status_code=status.HTTP_200_OK)
+async def tutor_change_product_contents(request: Request, data: ChangeProductContents):
+    return await Role.change_product_contents(request, data)

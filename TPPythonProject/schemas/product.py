@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
-from .field_types import Discipline
+from .field_types import Discipline, Price
 
 
 
@@ -9,7 +9,7 @@ class AddProduct(BaseModel):
     discipline: Discipline
     name: str
     description: Optional[str] = None
-    price: float = Field(ge=1.0, le=100000.0)
+    price: float = Price
 
 
 class AddProductInform(BaseModel):
@@ -23,8 +23,8 @@ class GetProduct(BaseModel):
     author_id: int
     blocked: bool
     vendor_code: str
-    discipline: str
+    discipline: Discipline
     name: str
     description: Optional[str] = None
-    price: float
+    price: float = Price
 
