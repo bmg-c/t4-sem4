@@ -1,7 +1,8 @@
-from fastapi import UploadFile, HTTPException, status
+from fastapi import UploadFile, HTTPException, status, Request
 from fastapi.responses import FileResponse
 from database import new_session, UserModel
 from schemas import GetUser
+from functions import Functions
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete, Select
 from uuid import uuid4
@@ -11,7 +12,16 @@ import os
 
 class User:
     @classmethod
-    async def change_user_nickname(cls, user_id: int, nickname: str):
+    async def change_user_nickname(cls, request: Request, user_id: int, nickname: str):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_id_check = acc_info["user_id"]
+
+        if user_id_check == user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
         async with new_session() as session:
             query = select(UserModel).filter_by(id=user_id)
             result = await session.execute(query)
@@ -25,7 +35,16 @@ class User:
             return {}
 
     @classmethod
-    async def change_user_photo(cls, user_id: int, photo: UploadFile):
+    async def change_user_photo(cls, request: Request, user_id: int, photo: UploadFile):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_id_check = acc_info["user_id"]
+
+        if user_id_check == user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
         if photo.content_type != "image/png" and photo.content_type != "image/jpeg":
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                                 detail="File should be one of these image types: png, jpg, jpeg")
@@ -53,7 +72,16 @@ class User:
             return {}
 
     @classmethod
-    async def change_user_password(cls, user_id: int, password: str):
+    async def change_user_password(cls, request: Request, user_id: int, password: str):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_id_check = acc_info["user_id"]
+
+        if user_id_check == user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
         async with new_session() as session:
             query = select(UserModel).filter_by(id=user_id)
             result = await session.execute(query)
