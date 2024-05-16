@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, File, UploadFile, status, HTTPException
+from fastapi import APIRouter, File, UploadFile, status, HTTPException, Request
 from fastapi.responses import FileResponse
 from schemas import AddProduct, AddProductInform, GetProduct
 from services import Product
@@ -10,23 +10,23 @@ router = APIRouter(tags=["Product"], prefix="/product")
 
 
 @router.post("/add", response_model=AddProductInform, status_code=status.HTTP_201_CREATED)
-async def add_product(data: AddProduct):
-    return await Product.add_product(data)
+async def add_product(request: Request, data: AddProduct):
+    return await Product.add_product(request, data)
 
 
 @router.put("/id/{product_id}/addphoto")
-async def change_product_photo(product_id: int, photo: UploadFile = File(...)):
-    return await Product.change_product_photo(product_id, photo)
+async def change_product_photo(request: Request, product_id: int, photo: UploadFile = File(...)):
+    return await Product.change_product_photo(request, product_id, photo)
 
 
 @router.put("/{product_id}/change_block_status")
-async def change_product_block_status(product_id: int, blocked: bool):
-    return await Product.change_product_block_status(product_id, blocked)
+async def change_product_block_status(request: Request, product_id: int, blocked: bool):
+    return await Product.change_product_block_status(request, product_id, blocked)
 
 
 @router.delete("/{product_id}/delete")
-async def del_product(product_id: int):
-    return await Product.del_product(product_id)
+async def del_product(request: Request, product_id: int):
+    return await Product.del_product(request, product_id)
 
 
 @router.get("/id/{product_id}", response_model=Optional[GetProduct])
