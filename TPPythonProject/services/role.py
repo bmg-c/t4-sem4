@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status, Request
 from database import ProductModel, new_session, UserModel
-from schemas import Inform, ChangeRole, UserCookie, ChangeUserBlockStatus
+from schemas import Inform, ChangeRole, ChangeUserBlockStatus
+from functions import Functions
 from sqlalchemy import select
-import jwt
 
 from schemas.role import ChangeProductContents
 
@@ -10,26 +10,8 @@ from schemas.role import ChangeProductContents
 class Role:
     @classmethod
     async def change_role(cls, request: Request, data: ChangeRole):
-        token = request.cookies.get('token')
-        if token is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Login cookie was not found"
-            )
-        key = 'manilovefishing'
-        cookie_dict: dict = jwt.decode(token, key, algorithms=["HS256"])
-        cookie: UserCookie = UserCookie(**cookie_dict)
-        user_role = ""
-        async with new_session() as session:
-            query = select(UserModel).filter_by(email=cookie.email)
-            result = await session.execute(query)
-            user = result.scalars().first()
-            if user is None:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User cookie is outdated"
-                )
-            user_role = user.role
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
 
         if user_role != "Админ":
             raise HTTPException(
@@ -69,26 +51,8 @@ class Role:
 
     @classmethod
     async def change_user_block_status(cls, request: Request, data: ChangeUserBlockStatus):
-        token = request.cookies.get('token')
-        if token is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Login cookie was not found"
-            )
-        key = 'manilovefishing'
-        cookie_dict: dict = jwt.decode(token, key, algorithms=["HS256"])
-        cookie: UserCookie = UserCookie(**cookie_dict)
-        user_role = ""
-        async with new_session() as session:
-            query = select(UserModel).filter_by(email=cookie.email)
-            result = await session.execute(query)
-            user = result.scalars().first()
-            if user is None:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User cookie is outdated"
-                )
-            user_role = user.role
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
 
         if user_role != "Админ":
             raise HTTPException(
@@ -112,27 +76,9 @@ class Role:
 
     @classmethod
     async def change_product_contents(cls, request: Request, data: ChangeProductContents):
-        token = request.cookies.get('token')
-        if token is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Login cookie was not found"
-            )
-        key = 'manilovefishing'
-        cookie_dict: dict = jwt.decode(token, key, algorithms=["HS256"])
-        cookie: UserCookie = UserCookie(**cookie_dict)
-        user_role = ""
-        async with new_session() as session:
-            query = select(UserModel).filter_by(email=cookie.email)
-            result = await session.execute(query)
-            user = result.scalars().first()
-            if user is None:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User cookie is outdated"
-                )
-            user_role = user.role
-            user_id = user.id
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
+        user_id = acc_info["user_id"]
 
         if user_role == "Студент":
             raise HTTPException(

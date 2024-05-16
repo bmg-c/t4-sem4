@@ -1,11 +1,12 @@
 import os
 from typing import Sequence
-from fastapi import UploadFile, HTTPException, status
+from fastapi import UploadFile, HTTPException, status, Request
 from fastapi.responses import FileResponse
 from database import new_session, ProductModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete, Select
 from schemas import AddProduct, AddProductInform
+from functions import Functions
 from uuid import uuid4
 import shutil
 
@@ -36,10 +37,20 @@ def id_to_vendor_code(id: int) -> str:
 
 class Product:
     @classmethod
-    async def add_product(cls, data: AddProduct):
+    async def add_product(cls, request: Request, data: AddProduct):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
+        user_id = acc_info["user_id"]
+
+        if user_role != "Тьютор":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
         async with new_session() as session:
             data_dict = data.model_dump()
-            product_field = ProductModel(**data_dict, author_id=1, blocked=False)  # добавить author_id после добавления пользователей
+            product_field = ProductModel(**data_dict, author_id=user_id, blocked=False)
             session.add(product_field)
             product_field.vendor_code = "000000"
             try:
@@ -47,14 +58,30 @@ class Product:
                 product_field.vendor_code = id_to_vendor_code(product_field.id)
                 await session.flush()
             except IntegrityError:
-                raise HTTPException(status.HTTP_400_BAD_REQUEST, "Can't add product to the database, possible: vendor_code exists")
+                raise HTTPException(
+                    status.HTTP_400_BAD_REQUEST,
+                    detail="Can't add product to the database, possible: vendor_code exists"
+                )
             await session.commit()
             return AddProductInform(product_id=product_field.id, author_id=product_field.author_id)
 
     @classmethod
-    async def change_product_photo(cls, product_id: int, photo: UploadFile):
+    async def change_product_photo(cls, request: Request, product_id: int, photo: UploadFile):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
+        user_id = acc_info["user_id"]
+
+        if user_role == "Студент":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
         if photo.content_type != "image/png" and photo.content_type != "image/jpeg":
-            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="File should be one of these image types: png, jpg, jpeg")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="File should be one of these image types: png, jpg, jpeg"
+            )
 
         if photo.content_type == "image/png":
             photo.filename = str(uuid4()) + ".png"
@@ -67,7 +94,18 @@ class Product:
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Product with this product id does not exist"
+                )
+            author_id = product_field.author_id
+
+            if author_id != user_id and user_role != "Админ":
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="User doesn't have sufficient rights for this action"
+                )
+
             if product_field.photo is not None:
                 os.remove("./" + product_field.photo)
             with open(path, "wb+") as buffer:
@@ -78,27 +116,59 @@ class Product:
             return {}
 
     @classmethod
-    async def change_product_block_status(cls, product_id: int, blocked: bool):
+    async def change_product_block_status(cls, request: Request, product_id: int, blocked: bool):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
+
+        if user_role != "Админ":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
         async with new_session() as session:
             query = select(ProductModel).filter_by(id=product_id)
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail="Product with this product id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Product with this product id does not exist"
+                )
             product_field.blocked = blocked
             await session.flush()
             await session.commit()
             return {}
 
     @classmethod
-    async def del_product(cls, product_id: int):
+    async def del_product(cls, request: Request, product_id: int):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
+        user_id = acc_info["user_id"]
+
+        if user_role == "Студент":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
         async with new_session() as session:
             query = select(ProductModel).filter_by(id=product_id)
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Product with this product id does not exist"
+                )
+            author_id = product_field.author_id
+
+            if author_id != user_id and user_role != "Админ":
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="User doesn't have sufficient rights for this action"
+                )
+
             path = product_field.photo
             if path is not None:
                 os.remove(path)
@@ -115,7 +185,10 @@ class Product:
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Product with this product id does not exist"
+                )
             return product_field
 
     @classmethod
@@ -125,7 +198,10 @@ class Product:
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this vendor code does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Product with this vendor code does not exist"
+                )
             return product_field
 
     @classmethod
@@ -171,7 +247,10 @@ class Product:
             result = await session.execute(query)
             product_field = result.scalars().first()
             if product_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with this product id has not been found")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Product with this product id has not been found"
+                )
             if product_field.photo is None:
                 return FileResponse("media/nophoto.jpg")
             else:
@@ -185,4 +264,3 @@ class Product:
             result = await session.execute(query)
             product_fields = result.scalars().all()
             return product_fields
-
