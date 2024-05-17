@@ -1,9 +1,9 @@
 from fastapi import UploadFile, HTTPException, status, Request
 from fastapi.responses import FileResponse
-from database import new_session, UserModel
+from database import new_session, UserModel, PurchaseHistoryModel
 from schemas import GetUser
 from functions import Functions
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import joinedload
 from sqlalchemy import select, delete, Select
 from uuid import uuid4
 import shutil
@@ -16,7 +16,7 @@ class User:
         acc_info = await Functions.get_user_id_and_role(request)
         user_id_check = acc_info["user_id"]
 
-        if user_id_check == user_id:
+        if user_id_check != user_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User doesn't have sufficient rights for this action",
@@ -41,7 +41,7 @@ class User:
         acc_info = await Functions.get_user_id_and_role(request)
         user_id_check = acc_info["user_id"]
 
-        if user_id_check == user_id:
+        if user_id_check != user_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User doesn't have sufficient rights for this action",
@@ -82,7 +82,7 @@ class User:
         acc_info = await Functions.get_user_id_and_role(request)
         user_id_check = acc_info["user_id"]
 
-        if user_id_check == user_id:
+        if user_id_check != user_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User doesn't have sufficient rights for this action",
@@ -130,3 +130,30 @@ class User:
                 return FileResponse("media/nophoto.jpg")
             else:
                 return FileResponse(user_field.photo)
+
+    @classmethod
+    async def get_user_history(cls, request: Request, user_id: int):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_id_check = acc_info["user_id"]
+
+        if user_id_check != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
+        async with new_session() as session:
+            query = (
+                select(PurchaseHistoryModel)
+                .filter_by(user_id=user_id)
+                .options(joinedload(PurchaseHistoryModel.product))
+            )
+            result = await session.execute(query)
+            history = result.scalars().all()
+            data = []
+            for i in range(len(history)):
+                temp = {"id": history[i].id,
+                        "date": history[i].date,
+                        "product": history[i].product}
+                data.append(temp)
+        return data
