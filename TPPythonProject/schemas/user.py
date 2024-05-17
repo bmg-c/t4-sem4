@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from .field_types import Id, Nickname, Role
+from field_types import Id, Nickname, Role
 
 
 class GetUser(BaseModel):

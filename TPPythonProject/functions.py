@@ -2,6 +2,7 @@ from fastapi import HTTPException, status, Request
 from database import new_session, UserModel
 from schemas import UserCookie
 from sqlalchemy import select
+from constants import PRIVATE_KEY, ENCRYPTION_ALG
 import jwt
 
 
@@ -14,8 +15,8 @@ class Functions:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Login cookie was not found",
             )
-        key = "manilovefishing"
-        cookie_dict: dict = jwt.decode(token, key, algorithms=["HS256"])
+        key = PRIVATE_KEY
+        cookie_dict: dict = jwt.decode(token, key, algorithms=[ENCRYPTION_ALG])
         cookie: UserCookie = UserCookie(**cookie_dict)
         async with new_session() as session:
             query = select(UserModel).filter_by(email=cookie.email)

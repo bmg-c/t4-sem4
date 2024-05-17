@@ -5,6 +5,7 @@ from schemas import Register, GetUser, Login, UserCookie, Inform
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 import jwt
+from constants import PRIVATE_KEY, ENCRYPTION_ALG
 
 
 class Auth:
@@ -43,14 +44,14 @@ class Auth:
                     detail="This user does not exist",
                 )
 
-            key = "manilovefishing"
+            key = PRIVATE_KEY
             response = JSONResponse(GetUser(**user.__dict__).model_dump(), 200)
             response.set_cookie(
                 key="token",
                 value=jwt.encode(
                     payload=UserCookie(id=user.id, email=user.email).model_dump(),
                     key=key,
-                    algorithm="HS256",
+                    algorithm=ENCRYPTION_ALG,
                 ),
             )
             return response
@@ -72,6 +73,6 @@ class Auth:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Login cookie was not found",
             )
-        key = "manilovefishing"
-        cookie: UserCookie = jwt.decode(token, key, algorithms=["HS256"])
+        key = PRIVATE_KEY
+        cookie: UserCookie = jwt.decode(token, key, algorithms=[ENCRYTION_ALG])
         return cookie

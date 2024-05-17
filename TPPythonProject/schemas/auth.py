@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from .field_types import Id, PasswordStr
+from field_types import Id, PasswordStr
 
 
 class UserCookie(BaseModel):

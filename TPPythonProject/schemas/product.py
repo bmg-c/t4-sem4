@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import date
-from .field_types import (
+from field_types import (
     Discipline,
     Id,
     PhotoPath,

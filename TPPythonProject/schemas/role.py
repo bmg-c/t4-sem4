@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from .field_types import Id, ProductDescrition, ProductName, Role, Price, Discipline
+from field_types import Id, ProductDescrition, ProductName, Role, Price, Discipline
 
 
 class ChangeRole(BaseModel):
