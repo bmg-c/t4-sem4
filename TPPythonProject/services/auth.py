@@ -74,5 +74,5 @@ class Auth:
                 detail="Login cookie was not found",
             )
         key = PRIVATE_KEY
-        cookie: UserCookie = jwt.decode(token, key, algorithms=[ENCRYTION_ALG])
+        cookie: UserCookie = jwt.decode(token, key, algorithms=[ENCRYPTION_ALG])
         return cookie
