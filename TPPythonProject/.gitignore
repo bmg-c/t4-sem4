@@ -177,3 +177,5 @@ pyrightconfig.json
 
 site.db 
 media/
+
+.zed

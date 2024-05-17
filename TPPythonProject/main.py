@@ -12,9 +12,9 @@ async def lifespan(app: FastAPI):
         await create_tables()
     yield
 
+
 app = FastAPI(lifespan=lifespan)
 app.include_router(api_router)
-
 
 
 origins = [

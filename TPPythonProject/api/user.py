@@ -14,14 +14,21 @@ async def change_user_nickname(request: Request, user_id: int, nickname: str):
 
 
 @router.put("/id/{user_id}/change_photo")
-async def change_user_photo(request: Request, user_id: int, photo: UploadFile = File(...)):
+async def change_user_photo(
+    request: Request, user_id: int, photo: UploadFile = File(...)
+):
     return await User.change_user_photo(request, user_id, photo)
 
 
 @router.put("/id/{user_id}/change_password")
-async def change_user_password(request: Request, user_id: int, password: str, repeat_password: str):
+async def change_user_password(
+    request: Request, user_id: int, password: str, repeat_password: str
+):
     if password != repeat_password:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Passwords do not match")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Passwords do not match",
+        )
     return await User.change_user_password(request, user_id, password)
 
 

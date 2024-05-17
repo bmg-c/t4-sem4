@@ -8,12 +8,11 @@ class UserCookie(BaseModel):
 
 
 class Register(BaseModel):
-    email: EmailStr = 'mail@email.com'
-    password: PasswordStr = 'aoeuidhtn'
-    re_password: PasswordStr = 'aoeuidhtn'
+    email: EmailStr = "mail@email.com"
+    password: PasswordStr = "aoeuidhtn"
+    re_password: PasswordStr = "aoeuidhtn"
 
 
 class Login(BaseModel):
-    email: EmailStr = 'mail@email.com'
-    password: PasswordStr = 'aoeuidhtn'
-
+    email: EmailStr = "mail@email.com"
+    password: PasswordStr = "aoeuidhtn"

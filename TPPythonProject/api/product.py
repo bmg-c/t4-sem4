@@ -9,13 +9,17 @@ from typing import Optional
 router = APIRouter(tags=["Product"], prefix="/product")
 
 
-@router.post("/add", response_model=AddProductInform, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/add", response_model=AddProductInform, status_code=status.HTTP_201_CREATED
+)
 async def add_product(request: Request, data: AddProduct):
     return await Product.add_product(request, data)
 
 
 @router.put("/id/{product_id}/addphoto")
-async def change_product_photo(request: Request, product_id: int, photo: UploadFile = File(...)):
+async def change_product_photo(
+    request: Request, product_id: int, photo: UploadFile = File(...)
+):
     return await Product.change_product_photo(request, product_id, photo)
 
 
@@ -24,7 +28,9 @@ async def change_product_block_status(request: Request, product_id: int, blocked
     return await Product.change_product_block_status(request, product_id, blocked)
 
 
-@router.post("/{product_id}/buy", response_model=BuyProduct, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{product_id}/buy", response_model=BuyProduct, status_code=status.HTTP_201_CREATED
+)
 async def buy_product(request: Request, product_id: int):
     return await Product.buy_product(request, product_id)
 
@@ -42,7 +48,10 @@ async def get_product(product_id: int):
 @router.get("/vendor_code/{vendor_code}", response_model=Optional[GetProduct])
 async def get_product_by_vendor_code(vendor_code: str):
     if not vendor_code.isnumeric():
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Vendor code should be a number")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Vendor code should be a number",
+        )
     return await Product.get_product_by_vendor_code(vendor_code)
 
 
@@ -63,7 +72,9 @@ async def get_all_products_by_search_query(search_query: str):
 
 @router.get("/search_query/sorted_by", response_model=list[GetProduct])
 async def get_all_products_by_search_query_sorted_by(search_query: str, sort_by: str):
-    return await Product.get_all_products_by_search_query_sorted_by(search_query, sort_by)
+    return await Product.get_all_products_by_search_query_sorted_by(
+        search_query, sort_by
+    )
 
 
 @router.get("/sort_by", response_model=list[GetProduct])
@@ -74,4 +85,3 @@ async def get_all_products_sorted_by(sort_by: str):
 @router.get("/id/{product_id}/photo", response_class=FileResponse)
 async def get_product_photo(product_id: int):
     return await Product.get_product_photo(product_id)
-

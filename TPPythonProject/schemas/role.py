@@ -18,4 +18,3 @@ class ChangeProductContents(BaseModel):
     name: ProductName
     description: ProductDescrition
     discipline: Discipline
-

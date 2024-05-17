@@ -1,7 +1,14 @@
 from pydantic import BaseModel
 from datetime import date
-from .field_types import Discipline, Id, PhotoPath, Price, ProductDescrition, ProductName, VendorCode
-
+from .field_types import (
+    Discipline,
+    Id,
+    PhotoPath,
+    Price,
+    ProductDescrition,
+    ProductName,
+    VendorCode,
+)
 
 
 class AddProduct(BaseModel):
@@ -33,4 +40,3 @@ class GetProduct(BaseModel):
     name: ProductName
     description: ProductDescrition = None
     price: float = Price
-

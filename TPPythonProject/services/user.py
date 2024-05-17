@@ -19,7 +19,7 @@ class User:
         if user_id_check == user_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesn't have sufficient rights for this action"
+                detail="User doesn't have sufficient rights for this action",
             )
 
         async with new_session() as session:
@@ -27,8 +27,10 @@ class User:
             result = await session.execute(query)
             user_field = result.scalars().first()
             if user_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail="User with this user id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User with this user id does not exist",
+                )
             user_field.nickname = nickname
             await session.flush()
             await session.commit()
@@ -42,12 +44,14 @@ class User:
         if user_id_check == user_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesn't have sufficient rights for this action"
+                detail="User doesn't have sufficient rights for this action",
             )
 
         if photo.content_type != "image/png" and photo.content_type != "image/jpeg":
-            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                                detail="File should be one of these image types: png, jpg, jpeg")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="File should be one of these image types: png, jpg, jpeg",
+            )
 
         if photo.content_type == "image/png":
             photo.filename = str(uuid4()) + ".png"
@@ -60,8 +64,10 @@ class User:
             result = await session.execute(query)
             user_field = result.scalars().first()
             if user_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail="User with this user id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User with this user id does not exist",
+                )
             if user_field.photo is not None:
                 os.remove("./" + user_field.photo)
             with open(path, "wb+") as buffer:
@@ -79,7 +85,7 @@ class User:
         if user_id_check == user_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesn't have sufficient rights for this action"
+                detail="User doesn't have sufficient rights for this action",
             )
 
         async with new_session() as session:
@@ -87,8 +93,10 @@ class User:
             result = await session.execute(query)
             user_field = result.scalars().first()
             if user_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail="User with this user id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User with this user id does not exist",
+                )
             user_field.password = password
             await session.flush()
             await session.commit()
@@ -101,8 +109,10 @@ class User:
             result = await session.execute(query)
             user_field = result.scalars().first()
             if user_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail="User with this user id does not exist")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User with this user id does not exist",
+                )
             return GetUser(**user_field.__dict__)
 
     @classmethod
@@ -112,8 +122,10 @@ class User:
             result = await session.execute(query)
             user_field = result.scalars().first()
             if user_field is None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail="User with this user id has not been found")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User with this user id has not been found",
+                )
             if user_field.photo is None:
                 return FileResponse("media/nophoto.jpg")
             else:

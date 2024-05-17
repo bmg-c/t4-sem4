@@ -8,13 +8,13 @@ import jwt
 class Functions:
     @classmethod
     async def get_user_id_and_role(cls, request: Request):
-        token = request.cookies.get('token')
+        token = request.cookies.get("token")
         if token is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Login cookie was not found"
+                detail="Login cookie was not found",
             )
-        key = 'manilovefishing'
+        key = "manilovefishing"
         cookie_dict: dict = jwt.decode(token, key, algorithms=["HS256"])
         cookie: UserCookie = UserCookie(**cookie_dict)
         async with new_session() as session:
@@ -24,7 +24,7 @@ class Functions:
             if user is None:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User cookie is outdated"
+                    detail="User cookie is outdated",
                 )
             user_role = user.role
             user_id = user.id
