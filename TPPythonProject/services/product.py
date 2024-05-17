@@ -1,8 +1,9 @@
 import os
+from datetime import date
 from typing import Sequence
 from fastapi import UploadFile, HTTPException, status, Request
 from fastapi.responses import FileResponse
-from database import new_session, ProductModel
+from database import new_session, ProductModel, PurchaseHistoryModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete, Select
 from schemas import AddProduct, AddProductInform
@@ -139,6 +140,40 @@ class Product:
             await session.flush()
             await session.commit()
             return {}
+
+    @classmethod
+    async def buy_product(cls, request: Request, product_id: int):
+        acc_info = await Functions.get_user_id_and_role(request)
+        user_role = acc_info["user_role"]
+        user_id = acc_info["user_id"]
+
+        if user_role == "Админ":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesn't have sufficient rights for this action"
+            )
+
+        async with new_session() as session:
+            query = select(ProductModel).filter_by(id=product_id)
+            result = await session.execute(query)
+            product_field = result.scalars().first()
+            if product_field is None:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Product with this product id does not exist"
+                )
+            if product_field.author_id == user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Can't buy the product because user is it's author"
+                )
+            purchase_field = PurchaseHistoryModel(user_id=user_id, product_id=product_id,
+                                                  date=date.today())
+            session.add(purchase_field)
+            await session.flush()
+            await session.commit()
+            return purchase_field
+
 
     @classmethod
     async def del_product(cls, request: Request, product_id: int):
