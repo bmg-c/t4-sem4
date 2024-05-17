@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, File, UploadFile, status, HTTPException, Request
 from fastapi.responses import FileResponse
-from schemas import AddProduct, AddProductInform, GetProduct
+from schemas import AddProduct, AddProductInform, GetProduct, BuyProduct
 from services import Product
 from typing import Optional
 
@@ -22,6 +22,11 @@ async def change_product_photo(request: Request, product_id: int, photo: UploadF
 @router.put("/{product_id}/change_block_status")
 async def change_product_block_status(request: Request, product_id: int, blocked: bool):
     return await Product.change_product_block_status(request, product_id, blocked)
+
+
+@router.post("/{product_id}/buy", response_model=BuyProduct, status_code=status.HTTP_201_CREATED)
+async def buy_product(request: Request, product_id: int):
+    return await Product.buy_product(request, product_id)
 
 
 @router.delete("/{product_id}/delete")
