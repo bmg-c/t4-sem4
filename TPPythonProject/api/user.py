@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, File, UploadFile, status, HTTPException, Request
 from fastapi.responses import FileResponse
 from services import User
-from schemas import GetUser
+from schemas import GetUser, GetHistory
 
 router = APIRouter(tags=["User"], prefix="/user")
 
@@ -40,3 +40,8 @@ async def get_user(user_id: int):
 @router.get("/id/{user_id}/photo", response_class=FileResponse)
 async def get_user_photo(user_id: int):
     return await User.get_user_photo(user_id)
+
+
+@router.get("/id/{user_id}/history", response_model=list[GetHistory])
+async def get_user_history(request: Request, user_id: int):
+    return await User.get_user_history(request, user_id)

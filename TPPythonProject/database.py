@@ -23,7 +23,7 @@ class UserModel(Model):
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
 
-    purchase_history: Mapped["PurchaseHistoryModel"] = relationship()
+    purchase_history: Mapped[list["PurchaseHistoryModel"]] = relationship()
     products: Mapped[list["ProductModel"]] = relationship()
 
 
@@ -34,6 +34,8 @@ class PurchaseHistoryModel(Model):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     product_id: Mapped[int] = mapped_column(ForeignKey("product.id"))
     date: Mapped[date]
+
+    product: Mapped["ProductModel"] = relationship()
 
 
 class ProductModel(Model):
